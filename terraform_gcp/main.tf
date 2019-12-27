@@ -9,6 +9,9 @@ resource "google_compute_instance" "tfansible" {
   machine_type = "f1-micro"
   zone         = "us-central1-a"
 
+  count = length(var.vm)
+  name = var.vm[count.index]
+
   tags = ["web"]
 
   boot_disk {

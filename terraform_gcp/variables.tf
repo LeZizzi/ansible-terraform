@@ -10,10 +10,17 @@ variable "private_key_path" {
 
 variable "project_name" {
   description = "Name of your GCP project.  Example: ansible-terraform-218216"
-  default     = "ansible-terraform-218216"
+  default     = "tera-83100"
 }
 
 variable "ssh_user" {
   description = "SSH user name to connect to your instance."
-  default     = "scarolan"
+  default     = "toor"
+}
+
+variable "vm" {
+  description = "Create IAM users with these names"
+  type        = list(string)
+  # default     = ["terra", "trinity", "morpheus"]
+  default = ["terra"]
 }
