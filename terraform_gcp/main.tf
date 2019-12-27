@@ -1,19 +1,19 @@
 provider "google" {
-  credentials = "${file("account.json")}"
-  project     = "${var.project_name}"
+  credentials = file("account.json")
+  project     = var.project_name
   region      = "us-central1"
 }
 
 resource "google_compute_instance" "tfansible" {
   name         = "terraform-ansible"
-  machine_type = "n1-standard-1"
+  machine_type = "f1-micro"
   zone         = "us-central1-a"
 
   tags = ["web"]
 
   boot_disk {
     initialize_params {
-      image = "rhel-cloud/rhel-7"
+      image = "debian-cloud/debian-9"
     }
   }
 
@@ -49,8 +49,8 @@ resource "google_compute_instance" "tfansible" {
 
     connection {
       type        = "ssh"
-      user        = "${var.ssh_user}"
-      private_key = "${file("${var.private_key_path}")}"
+      user        = var.ssh_user
+      private_key = file("${var.private_key_path}")
     }
   }
   provisioner "local-exec" {
