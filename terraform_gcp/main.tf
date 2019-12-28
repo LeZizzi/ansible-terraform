@@ -53,7 +53,7 @@ resource "google_compute_instance" "tfansible" {
     connection {
       type        = "ssh"
       user        = var.ssh_user
-      private_key = file("${var.private_key_path}")
+      private_key = file(var.private_key_path)
     }
   }
   provisioner "local-exec" {
