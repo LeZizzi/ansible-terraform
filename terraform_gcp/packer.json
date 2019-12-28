@@ -10,16 +10,8 @@
         "account_file": "secrets.json"
       }
     ],
-    "provisioners" : [
-        {
-            "type": "shell",
-            "script": "scripts/nginx.sh"
-        },
-        {
-          "type": "goss",
-          "tests": [
-            "goss/goss.yaml"
-          ]
-        }
-      ]
+   "provisioners": [{
+      "type": "ansible",
+      "playbook_file": "../ansible/httpd.yml"
+    }]
 }
