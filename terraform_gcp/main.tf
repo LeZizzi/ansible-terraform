@@ -3,6 +3,8 @@ provider "google" {
   project     = var.project_name
   region      = "us-central1"
 }
+#### out of packer    ///####  "ssh_private_key_file": "/home/citizenx/.ssh/id_rsa",
+
 
 resource "google_compute_instance" "tfansible" {
    machine_type = "f1-micro"
@@ -20,9 +22,7 @@ resource "google_compute_instance" "tfansible" {
   }
 
   // Local SSD disk
-  scratch_disk {
-    interface = "SCSI"
-  }
+
 
   network_interface {
     network = "default"
@@ -32,6 +32,9 @@ resource "google_compute_instance" "tfansible" {
     }
   }
 
+metadata = {
+    ssh-keys = "${var.private_key_path}:${file(var.public_key_path)}"
+  }
 
 
   metadata_startup_script = "echo hi > /test.txt"
