@@ -5,8 +5,7 @@ provider "google" {
 }
 
 resource "google_compute_instance" "tfansible" {
-  name         = "terraform-ansible"
-  machine_type = "f1-micro"
+   machine_type = "f1-micro"
   zone         = "us-central1-a"
 
   count = length(var.vm)
@@ -21,7 +20,9 @@ resource "google_compute_instance" "tfansible" {
   }
 
   // Local SSD disk
-  scratch_disk {}
+  scratch_disk {
+    interface = "SCSI"
+  }
 
   network_interface {
     network = "default"
@@ -31,10 +32,7 @@ resource "google_compute_instance" "tfansible" {
     }
   }
 
-  metadata {
-    Name     = "Terraform and Ansible Demo"
-    ssh-keys = "${var.ssh_user}:${file("${var.public_key_path}")}"
-  }
+
 
   metadata_startup_script = "echo hi > /test.txt"
 
@@ -43,7 +41,7 @@ resource "google_compute_instance" "tfansible" {
   }
 
   #############################################################################
-  # This is the 'local exec' method.  
+  # This is the 'local exec' method.
   # Ansible runs from the same host you run Terraform from
   #############################################################################
 
@@ -51,17 +49,18 @@ resource "google_compute_instance" "tfansible" {
     inline = ["echo 'Hello World'"]
 
     connection {
+      host        = self.network_interface[0].access_config[0].nat_ip
       type        = "ssh"
       user        = var.ssh_user
       private_key = file(var.private_key_path)
+
     }
   }
-  provisioner "local-exec" {
-    command = "ansible-playbook -i '${google_compute_instance.tfansible.network_interface.0.access_config.0.assigned_nat_ip},' --private-key ${var.private_key_path} ../ansible/httpd.yml"
-  }
+  ## command = "ansible-playbook -i '${google_compute_instance.tfansible.network_interface.0.access_config.0.assigned_nat_ip},' --private-key ${var.private_key_path} ../ansible/httpd.yml"
+  #}
 
   #############################################################################
-  # This is the 'remote exec' method.  
+  # This is the 'remote exec' method.
   # Ansible runs on the target host.
   #############################################################################
 

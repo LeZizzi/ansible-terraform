@@ -1,17 +1,32 @@
 {
-    "builders": [
+  "variables": {
+        "gcloud_account_json": "account.json",
+        "gcloud_project_id": "tera-83100"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "{{user `gcloud_account_json`}}",
+      "project_id": "{{user `gcloud_project_id`}}",
+      "ssh_username":"ubuntu",
+      "source_image_family": "debian-9",
+      "image_name": "apache-golden-{{timestamp}}",
+      "zone": "northamerica-northeast1-a",
+      "machine_type":"f1-micro",
+      "disk_size": "20",
+      "on_host_maintenance":"TERMINATE",
+      "image_family":"apache"
+    }
+  ],
+  "provisioners": [
       {
-        "type": "googlecompute",
-        "project_id": "{{user `project_id`}}",
-        "source_image_family": "debian-9",
-        "zone": "us-central1-a",
-        "image_description": "packer-image",
-        "ssh_username": "root",
-        "account_file": "secrets.json"
+           "type": "shell",
+           "inline": [
+                "sudo apt-get clean",
+                "sudo apt-get update",
+                "sudo apt-get -y upgrade",
+                "sudo apt-get -y install apache2 htop stress"
+           ]
       }
-    ],
-   "provisioners": [{
-      "type": "ansible",
-      "playbook_file": "../ansible/httpd.yml"
-    }]
+  ]
 }
